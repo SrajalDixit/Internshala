@@ -4,21 +4,27 @@ import 'package:internshala/models/intern_model.dart'; // Ensure this imports St
 class InternCard extends StatelessWidget {
   final String title;
   final String company;
-  final String workType;
+  final List<String> locations;
   final String duration;
   final Stipend? stipend; // Update to Stipend
+  final String startDate; 
 
   const InternCard({
     Key? key,
     required this.title,
     required this.company,
-    required this.workType,
+    required this.locations, 
     required this.duration,
     this.stipend, // Update to Stipend
+    required this.startDate,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+
+    final locationText = locations.isNotEmpty
+        ? locations.join(' , ')
+        : 'Remote';
     // Handle stipend display
     final stipendText = stipend != null
         ? '${stipend?.currency ?? ''} ${stipend?.salaryValue1?.toString() ?? 'No Stipend'}'
@@ -62,7 +68,7 @@ class InternCard extends StatelessWidget {
                   color: Colors.black54,
                 ),
                 SizedBox(width: 8.0),
-                Text(workType),
+                Text(locationText),
               ],
             ),
             SizedBox(height: 10.0),
@@ -73,7 +79,7 @@ class InternCard extends StatelessWidget {
                   color: Colors.black54,
                 ),
                 SizedBox(width: 8.0),
-                Text(workType),
+                Text(startDate),
                 SizedBox(width: 50.0),
                 Icon(
                   Icons.calendar_today_outlined,

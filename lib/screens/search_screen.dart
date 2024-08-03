@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:internshala/logic/api_services.dart'; // Ensure this imports the correct function
 import 'package:internshala/widgets/intern_card.dart';
 import 'package:internshala/widgets/search_bar.dart';
-import 'package:internshala/models/intern_model.dart'; // Import the Search model
+import 'package:internshala/models/intern_model.dart'; // Import the Internship model
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -13,23 +13,25 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   Search? searchData; // Change to Search
+  List<String> filteredInternshipIds = [];
+  String query = '';
 
   @override
   void initState() {
     super.initState();
-    _fetchInternships();
+    _loadInternships();
   }
 
-  Future<void> _fetchInternships() async {
+  Future<void> _loadInternships() async {
     try {
       final data = await fetchInternships();
       print('Fetched Internships: $data'); // Print fetched data for debugging
       setState(() {
         searchData = data;
+        filteredInternshipIds = data.internshipIds.map((id) => id.toString()).toList(); // Initialize with all internships
       });
     } catch (e) {
       print('Error fetching internships: $e');
-      // Show an error message to the user if needed
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -39,11 +41,20 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
+  
+  void _onSearch(String query) async {
+    if (searchData != null) {
+      final filtered = await filterInternships(searchData!, query);
+      setState(() {
+        filteredInternshipIds = filtered;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Get internships from searchData
     final internshipsMeta = searchData?.internshipsMeta ?? {};
-    final internshipIds = searchData?.internshipIds ?? [];
 
     return Scaffold(
       appBar: AppBar(
@@ -61,33 +72,31 @@ class _SearchScreenState extends State<SearchScreen> {
       body: Column(
         children: [
           SizedBox(height: 10),
-          searchBar(), // Make sure this widget is correctly implemented
-          SizedBox(
-            height: 10,
-          ),
+         searchBar(onSearchChanged: _onSearch,),
+          SizedBox(height: 10),
           Expanded(
-  child: ListView.builder(
-    itemCount: internshipIds.length,
-    itemBuilder: (context, index) {
-      final internshipId = internshipIds[index];
-      final internship = internshipsMeta[internshipId.toString()];
+            child: ListView.builder(
+              itemCount: filteredInternshipIds.length,
+              itemBuilder: (context, index) {
+                final internshipId = filteredInternshipIds[index];
+                final internship = internshipsMeta[internshipId.toString()];
 
-      // Ensure internship is not null
-      if (internship == null) {
-        return SizedBox.shrink(); // Empty widget if internship data is not found
-      }
+                // Ensure internship is not null
+                if (internship == null) {
+                  return SizedBox.shrink(); // Empty widget if internship data is not found
+                }
 
-      return InternCard(
-        title: internship.title ?? 'No Title',
-        company: internship.companyName ?? 'No Company',
-        workType: internship.duration ?? 'No Work Type',
-        duration: internship.duration ?? 'No Duration',
-        stipend: internship.stipend, // Pass the Stipend object
-      );
-    },
-  ),
-)
-
+                return InternCard(
+                  title: internship.title ?? 'No Title',
+                  company: internship.companyName ?? 'No Company',
+                  locations: internship.locationNames ?? [],
+                  duration: internship.duration ?? 'No Duration',
+                   stipend: internship.stipend,
+                  startDate: internship.startDate ?? 'Start Date Not Available',
+                );
+              },
+            ),
+          ),
         ],
       ),
     );
