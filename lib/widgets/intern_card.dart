@@ -1,27 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:internshala/util/constants.dart';
+import 'package:internshala/models/intern_model.dart'; // Ensure this imports Stipend
 
 class InternCard extends StatelessWidget {
-  const InternCard({super.key});
+  final String title;
+  final String company;
+  final String workType;
+  final String duration;
+  final Stipend? stipend; // Update to Stipend
+
+  const InternCard({
+    Key? key,
+    required this.title,
+    required this.company,
+    required this.workType,
+    required this.duration,
+    this.stipend, // Update to Stipend
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.white, // Set card color to white
-      elevation: 0.0, // Remove shadow
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-        side: BorderSide(
-            color: Colors.grey, width: 1.0), // Grey border color and width
+    // Handle stipend display
+    final stipendText = stipend != null
+        ? '${stipend?.currency ?? ''} ${stipend?.salaryValue1?.toString() ?? 'No Stipend'}'
+        : 'No Stipend';
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.0), // Rounded corners
+        border: Border.all(
+          color: Colors.grey[400]!, // Grey border color
+          width: 1.0, // Border width
+        ),
       ),
-      margin: const EdgeInsets.all(16.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Flutter Development',
+              title,
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
@@ -29,9 +48,9 @@ class InternCard extends StatelessWidget {
             ),
             SizedBox(height: 8.0),
             Text(
-              'Company Name',
+              company,
               style: TextStyle(
-                color: Colors.grey,
+                color: Colors.grey[700]!,
                 fontSize: 16.0,
               ),
             ),
@@ -39,29 +58,29 @@ class InternCard extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  Icons.home_outlined,
+                  Icons.location_on_outlined,
                   color: Colors.black54,
                 ),
                 SizedBox(width: 8.0),
-                Text('Work from Home'),
+                Text(workType),
               ],
             ),
             SizedBox(height: 10.0),
             Row(
               children: [
                 Icon(
-                  Icons.play_circle_outlined,
+                  Icons.play_circle_outline,
                   color: Colors.black54,
                 ),
                 SizedBox(width: 8.0),
-                Text('Starts Immediately'),
-                SizedBox(width: 15.0),
+                Text(workType),
+                SizedBox(width: 50.0),
                 Icon(
                   Icons.calendar_today_outlined,
                   color: Colors.black54,
                 ),
                 SizedBox(width: 8.0),
-                Text('1 Month'),
+                Text('$duration'),
               ],
             ),
             SizedBox(height: 10.0),
@@ -72,30 +91,30 @@ class InternCard extends StatelessWidget {
                   color: Colors.black54,
                 ),
                 SizedBox(width: 8.0),
-                Text('₹5,000/month'),
+                Text(stipendText), // Display stipend
               ],
             ),
-            SizedBox(height: 16.0), // Space before the button
-            Align(
-              alignment: Alignment.bottomRight,
-              child: TextButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Feature yet to be implemented'),
-                      duration: Duration(seconds: 2),
+            SizedBox(height: 10.0),
+            Row(
+              children: [
+                Spacer(),
+                TextButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                            'View details functionality yet to be implemented'),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    'View Details',
+                    style: TextStyle(
+                      color: Colors.blue,
                     ),
-                  );
-                },
-                child: Text(
-                  'View Details',
-                  style: TextStyle(
-                    color: mainColor, // Blue color for the text
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
                   ),
                 ),
-              ),
+              ],
             ),
           ],
         ),
