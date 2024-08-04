@@ -1,39 +1,68 @@
 import 'package:flutter/material.dart';
-import 'package:internshala/util/constants.dart'; // Make sure this imports the correct constant
+import 'package:internshala/util/constants.dart'; // Ensure this imports the correct constant
 
 class searchBar extends StatelessWidget {
-  final Function(String) onSearchChanged; // Add this line
+  final Function(String) onSearchChanged;
+  final VoidCallback onFilterPressed;
 
-  const searchBar({Key? key, required this.onSearchChanged}) : super(key: key); // Update constructor
+  const searchBar({
+    Key? key,
+    required this.onSearchChanged,
+    required this.onFilterPressed,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: TextField(
-        cursorColor: mainColor, // Neon blue cursor color
-        decoration: InputDecoration(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: Colors.grey), // Grey border color
+      child: Stack(
+        children: [
+          TextField(
+            cursorColor: mainColor,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: BorderSide(color: Colors.grey),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: BorderSide(color: mainColor),
+              ),
+              prefixIcon: Icon(
+                Icons.search,
+                color: Colors.black54,
+                size: 28.0,
+              ),
+              hintText: 'Search here...',
+              hintStyle: TextStyle(
+                color: Colors.grey,
+                fontWeight: FontWeight.w400,
+              ),
+              suffixIcon: Container(
+                width: 60,
+                height: 20, // Adjusted height to fit the icon
+                margin: const EdgeInsets.only(right: 8.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18.0),
+                  border: Border.all(color: mainColor, width: 1.5),
+                ),
+                child: Center(
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.filter_alt_outlined,
+                      color: mainColor,
+                      size: 28.0,
+                    ),
+                    onPressed: onFilterPressed,
+                    padding: EdgeInsets.zero,
+                    constraints: BoxConstraints(),
+                  ),
+                ),
+              ),
+            ),
+            onChanged: onSearchChanged,
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: mainColor), // Neon blue border color
-          ),
-          prefixIcon: Icon(
-            Icons.search,
-            color: Colors.black54,
-            size: 28.0, // Size of the search icon
-          ),
-          hintText: 'Search here...',
-          hintStyle: TextStyle(
-            color: Colors.grey,
-            fontWeight: FontWeight.w400,
-          ), // Grey color for hint text
-          contentPadding: const EdgeInsets.symmetric(vertical: 14.0), // Adjust height
-        ),
-        onChanged: onSearchChanged, // Update this line
+        ],
       ),
     );
   }

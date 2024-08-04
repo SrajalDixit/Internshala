@@ -7,13 +7,13 @@ class InternCard extends StatelessWidget {
   final List<String> locations;
   final String duration;
   final Stipend? stipend; // Update to Stipend
-  final String startDate; 
+  final String startDate;
 
   const InternCard({
     Key? key,
     required this.title,
     required this.company,
-    required this.locations, 
+    required this.locations,
     required this.duration,
     this.stipend, // Update to Stipend
     required this.startDate,
@@ -21,10 +21,8 @@ class InternCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    final locationText = locations.isNotEmpty
-        ? locations.join(' , ')
-        : 'Remote';
+    final locationText =
+        locations.isNotEmpty ? locations.join(' , ') : 'Remote';
     // Handle stipend display
     final stipendText = stipend != null
         ? '${stipend?.currency ?? ''} ${stipend?.salaryValue1?.toString() ?? 'No Stipend'}'
@@ -116,8 +114,9 @@ class InternCard extends StatelessWidget {
                   child: Text(
                     'View Details',
                     style: TextStyle(
-                      color: Colors.blue,
-                    ),
+                        color: Colors.blue,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500),
                   ),
                 ),
               ],

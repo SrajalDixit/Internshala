@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:internshala/models/intern_model.dart';
 import 'package:http/http.dart' as http;
+
 const String apiUrl = 'https://internshala.com/flutter_hiring/search';
 
 Future<Search> fetchInternships() async {
@@ -29,27 +30,30 @@ Future<Search> fetchInternships() async {
   }
 }
 
-Future<List<String>> filterInternships(
-    Search searchData, String query) async {
+Future<List<String>> filterInternships(Search searchData, String query) async {
   final internshipsMeta = searchData.internshipsMeta;
-  final filtered = searchData.internshipIds.where((internshipId) {
-    final internship = internshipsMeta[internshipId.toString()];
-    final title = internship?.title?.toLowerCase() ?? '';
-    final company = internship?.companyName?.toLowerCase() ?? '';
-    final locations = internship?.locationNames?.map((loc) => loc.toLowerCase()).toList() ?? [];
-    final stipend = internship?.stipend?.salaryValue1?.toString() ?? '';
-    final startDate = internship?.startDate?.toLowerCase() ?? '';
+  final filtered = searchData.internshipIds
+      .where((internshipId) {
+        final internship = internshipsMeta[internshipId.toString()];
+        final title = internship?.title?.toLowerCase() ?? '';
+        final company = internship?.companyName?.toLowerCase() ?? '';
+        final locations = internship?.locationNames
+                ?.map((loc) => loc.toLowerCase())
+                .toList() ??
+            [];
+        final stipend = internship?.stipend?.salaryValue1?.toString() ?? '';
+        final startDate = internship?.startDate?.toLowerCase() ?? '';
 
-    final searchTerm = query.toLowerCase();
+        final searchTerm = query.toLowerCase();
 
-    return title.contains(searchTerm) ||
-           company.contains(searchTerm) ||
-           locations.any((loc) => loc.contains(searchTerm)) ||
-           stipend.contains(searchTerm) ||
-           startDate.contains(searchTerm);
-  }).map((id) => id.toString()).toList();
+        return title.contains(searchTerm) ||
+            company.contains(searchTerm) ||
+            locations.any((loc) => loc.contains(searchTerm)) ||
+            stipend.contains(searchTerm) ||
+            startDate.contains(searchTerm);
+      })
+      .map((id) => id.toString())
+      .toList();
 
   return filtered;
 }
-
-
